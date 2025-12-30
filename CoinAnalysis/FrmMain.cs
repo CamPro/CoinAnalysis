@@ -124,7 +124,7 @@ namespace CoinAnalysis
             Thread.Sleep(1000);
 
             /*
-            for (int page = 1; page <= 5; page++)
+            for (int page = 1; page <= 6; page++)
             {
                 driver.Navigate().GoToUrl($"https://coinmarketcap.com/?page={page}");
                 Thread.Sleep(2000);
@@ -156,9 +156,12 @@ namespace CoinAnalysis
 
             string folderImage = Path.Combine(Application.StartupPath, "CoinGlass");
 
+            if (Directory.Exists(folderImage)) Directory.Delete(folderImage, true);
+            Thread.Sleep(10);
+
             if (!Directory.Exists(folderImage)) Directory.CreateDirectory(folderImage);
 
-            int start = 60;
+            int start = 90;
 
             for (int i = start; i < listCoinCode.Count; i++)
             {
@@ -177,7 +180,7 @@ namespace CoinAnalysis
                     Thread.Sleep(500);
 
                     // wait chart
-                    for (var tw = 0; tw < 3; tw++)
+                    for (var tw = 0; tw < 5; tw++)
                     {
                         try
                         {
@@ -219,8 +222,113 @@ namespace CoinAnalysis
 
             driver.Quit();
 
-            SystemSounds.Asterisk.Play();
+            // Analysis
 
+            string folderLONG = Path.Combine(Application.StartupPath, "LONG");
+            string folderSHORT = Path.Combine(Application.StartupPath, "SHORT");
+
+            if (Directory.Exists(folderLONG)) Directory.Delete(folderLONG, true);
+            if (Directory.Exists(folderSHORT)) Directory.Delete(folderSHORT, true);
+            Thread.Sleep(10);
+
+            if (!Directory.Exists(folderLONG)) Directory.CreateDirectory(folderLONG);
+            if (!Directory.Exists(folderSHORT)) Directory.CreateDirectory(folderSHORT);
+
+            string[] fileImages = Directory.GetFiles("D:\\CoinAnalysis\\CoinAnalysis\\bin\\Debug\\CoinGlass");
+
+            foreach (string fileImage in fileImages)
+            {
+                Bitmap fullImage = new Bitmap(fileImage);
+
+                int cropX = fullImage.Width * 90 / 100; // lấy đoạn bên phải
+                int cropY = 62;
+                int cropWidth = 100; // cách từ biên giới màu trắng bên phải lấy 100px
+                int cropHeight = 590;
+                Color color = Color.White;
+
+                // tìm biên giới màu trắng bên phải
+                for (int i = cropX; i < fullImage.Width; i++)
+                {
+                    color = fullImage.GetPixel(i, cropY + 10);
+
+                    if (color.R > 200 && color.G > 200 && color.B > 200)
+                    {
+                        cropX = i - cropWidth - 1;
+                        break;
+                    }
+                }
+
+                // Crop ảnh
+                Rectangle cropArea = new Rectangle(cropX, cropY, cropWidth, cropHeight);
+                fullImage = fullImage.Clone(cropArea, fullImage.PixelFormat);
+
+                //fullImage.Save(fileImage.Replace("\\CoinGlass", ""), System.Drawing.Imaging.ImageFormat.Jpeg);
+
+                // quét tìm điểm MÀU ĐỎ để lấy mốc phân trên dưới, mặc định mốc ở giữa ảnh
+                int centerY = fullImage.Height / 2;
+                for (var x = fullImage.Width - 1; x > 0; x--)
+                {
+                    for (var y = 0; y < fullImage.Height; y++)
+                    {
+                        color = fullImage.GetPixel(x, y);
+
+                        if (color.R > 160 && color.G < 85 && color.B < 140)
+                        {
+                            centerY = y;
+                            x = 0;
+                            break;
+                        }
+                    }
+                }
+
+                // đếm số điểm MÀU VÀNG trên và dưới
+                int numYellowUp = 0;
+                int numYellowDown = 0;
+                int numYellowUpHight = 0;
+                int numYellowDownHight = 0;
+
+                for (var y = 0; y < fullImage.Height; y++)
+                {
+                    color = fullImage.GetPixel(fullImage.Width - 5, y);
+                    // đếm số vàng nhạt
+                    if (color.R > 130 && color.G > 140 && color.B < 100)
+                    {
+                        if (y < centerY)
+                        {
+                            numYellowUp += 1;
+                        }
+                        else
+                        {
+                            numYellowDown += 1;
+                        }
+                    }
+                    // đếm số vàng đậm
+                    if (color.R > 200 && color.G > 200 && color.B < 85)
+                    {
+                        if (y < centerY)
+                        {
+                            numYellowUpHight += 1;
+                        }
+                        else
+                        {
+                            numYellowDownHight += 1;
+                        }
+                    }
+                }
+
+                if (numYellowUp > 3 && numYellowDown == 0 && numYellowUpHight > 3)
+                {
+                    File.Copy(fileImage, fileImage.Replace("\\CoinGlass", "\\LONG"), true);
+                }
+
+                if (numYellowUp == 0 && numYellowDown > 3 && numYellowDownHight > 3)
+                {
+                    File.Copy(fileImage, fileImage.Replace("\\CoinGlass", "\\SHORT"), true);
+                }
+
+            }
+
+            SystemSounds.Asterisk.Play();
             Application.Exit();
         }
 
