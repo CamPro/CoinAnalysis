@@ -134,7 +134,7 @@ namespace CoinAnalysis
                 // hover
                 js.ExecuteScript("arguments[0].scrollIntoView({behavior: 'smooth', block: 'center'})", element);
                 Thread.Sleep(500);
-                action.MoveToElement(element).MoveByOffset(1, 1).Perform();
+                actions.MoveToElement(element).MoveByOffset(1, 1).Perform();
                 Thread.Sleep(500);
 
                 // scan list
@@ -161,7 +161,7 @@ namespace CoinAnalysis
 
             if (!Directory.Exists(folderImage)) Directory.CreateDirectory(folderImage);
 
-            int start = 90;
+            int start = 100;
 
             for (int i = start; i < listCoinCode.Count; i++)
             {
@@ -180,7 +180,7 @@ namespace CoinAnalysis
                     Thread.Sleep(500);
 
                     // wait chart
-                    for (var tw = 0; tw < 5; tw++)
+                    for (var tw = 0; tw < 3; tw++)
                     {
                         try
                         {
