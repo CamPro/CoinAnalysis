@@ -113,7 +113,7 @@ namespace CoinAnalysis
             driver.Quit();
         }
         
-        private void button1_Click(object sender, EventArgs e)
+        private void buttonScanAnalysis_Click(object sender, EventArgs e)
         {
             List<string> listCoinCode = new List<string>();
 
@@ -123,8 +123,9 @@ namespace CoinAnalysis
             StartChromeDriver();
             Thread.Sleep(1000);
 
-            /*
-            for (int page = 1; page <= 6; page++)
+            int numPage = Convert.ToInt32(numPageCMC.Value);
+
+            for (int page = 1; page <= numPage; page++)
             {
                 driver.Navigate().GoToUrl($"https://coinmarketcap.com/?page={page}");
                 Thread.Sleep(2000);
@@ -151,8 +152,8 @@ namespace CoinAnalysis
             }
 
             File.WriteAllLines("list_500_coin.txt", listCoinCode, Encoding.UTF8);
-            */
-            listCoinCode = File.ReadAllLines("list_500_coin.txt", Encoding.UTF8).ToList();
+
+            //listCoinCode = File.ReadAllLines("list_500_coin.txt", Encoding.UTF8).ToList();
 
             string folderImage = Path.Combine(Application.StartupPath, "CoinGlass");
 
@@ -161,9 +162,9 @@ namespace CoinAnalysis
 
             if (!Directory.Exists(folderImage)) Directory.CreateDirectory(folderImage);
 
-            int start = 100;
+            int startIndex = Convert.ToInt32(numStartIndex.Value);
 
-            for (int i = start; i < listCoinCode.Count; i++)
+            for (int i = startIndex; i < listCoinCode.Count; i++)
             {
                 string coinCode = listCoinCode[i];
 
@@ -223,9 +224,16 @@ namespace CoinAnalysis
             driver.Quit();
 
             // Analysis
+            buttonAnalysis_Click(null, null);
 
-            string folderLONG = Path.Combine(Application.StartupPath, "LONG");
-            string folderSHORT = Path.Combine(Application.StartupPath, "SHORT");
+            SystemSounds.Asterisk.Play();
+            Application.Exit();
+        }
+
+        private void buttonAnalysis_Click(object sender, EventArgs e)
+        {
+            string folderLONG = Path.Combine(Application.StartupPath, "CoinGlass_LONG");
+            string folderSHORT = Path.Combine(Application.StartupPath, "CoinGlass_SHORT");
 
             if (Directory.Exists(folderLONG)) Directory.Delete(folderLONG, true);
             if (Directory.Exists(folderSHORT)) Directory.Delete(folderSHORT, true);
@@ -238,7 +246,11 @@ namespace CoinAnalysis
 
             foreach (string fileImage in fileImages)
             {
-                Bitmap fullImage = new Bitmap(fileImage);
+                byte[] bytes = File.ReadAllBytes(fileImage);
+                MemoryStream ms = new MemoryStream(bytes);
+                Image img = Image.FromStream(ms);
+
+                Bitmap fullImage = new Bitmap(img);
 
                 int cropX = fullImage.Width * 90 / 100; // lấy đoạn bên phải
                 int cropY = 62;
@@ -316,21 +328,18 @@ namespace CoinAnalysis
                     }
                 }
 
-                if (numYellowUp > 3 && numYellowDown == 0 && numYellowUpHight > 3)
+                int pixelYellow = Convert.ToInt32(numYellowPixel.Value);
+
+                if (numYellowUpHight >= pixelYellow && numYellowDown == 0)
                 {
-                    File.Copy(fileImage, fileImage.Replace("\\CoinGlass", "\\LONG"), true);
+                    File.Copy(fileImage, fileImage.Replace("\\CoinGlass", "\\CoinGlass_LONG"), true);
                 }
 
-                if (numYellowUp == 0 && numYellowDown > 3 && numYellowDownHight > 3)
+                if (numYellowUp == 0 && numYellowDownHight >= pixelYellow)
                 {
-                    File.Copy(fileImage, fileImage.Replace("\\CoinGlass", "\\SHORT"), true);
+                    File.Copy(fileImage, fileImage.Replace("\\CoinGlass", "\\CoinGlass_SHORT"), true);
                 }
-
             }
-
-            SystemSounds.Asterisk.Play();
-            Application.Exit();
         }
-
     }
 }
