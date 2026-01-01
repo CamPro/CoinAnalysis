@@ -119,7 +119,7 @@
             this.numPageCMC.Size = new System.Drawing.Size(50, 23);
             this.numPageCMC.TabIndex = 8;
             this.numPageCMC.Value = new decimal(new int[] {
-            6,
+            5,
             0,
             0,
             0});
