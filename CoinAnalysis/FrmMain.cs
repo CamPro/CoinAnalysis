@@ -2,6 +2,7 @@
 using OpenQA.Selenium.Chrome;
 using OpenQA.Selenium.Interactions;
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
@@ -21,6 +22,12 @@ namespace CoinAnalysis
     public partial class FrmMain : Form
     {
         public static string FolderUserData = Path.Combine(Application.StartupPath, "ChromeUserData");
+
+        public string folderLONG = Path.Combine(Application.StartupPath, "CoinGlass_LONG");
+        public string folderSHORT = Path.Combine(Application.StartupPath, "CoinGlass_SHORT");
+
+        public string folderListLONG = Path.Combine(Application.StartupPath, "list_LONG");
+        public string folderListSHORT = Path.Combine(Application.StartupPath, "list_SHORT");
 
         public static ChromeDriver driver = null;
         public static ReadOnlyCollection<IWebElement> elements = null;
@@ -232,9 +239,6 @@ namespace CoinAnalysis
 
         private void buttonAnalysis_Click(object sender, EventArgs e)
         {
-            string folderLONG = Path.Combine(Application.StartupPath, "CoinGlass_LONG");
-            string folderSHORT = Path.Combine(Application.StartupPath, "CoinGlass_SHORT");
-
             if (Directory.Exists(folderLONG)) Directory.Delete(folderLONG, true);
             if (Directory.Exists(folderSHORT)) Directory.Delete(folderSHORT, true);
             Thread.Sleep(10);
@@ -242,10 +246,18 @@ namespace CoinAnalysis
             if (!Directory.Exists(folderLONG)) Directory.CreateDirectory(folderLONG);
             if (!Directory.Exists(folderSHORT)) Directory.CreateDirectory(folderSHORT);
 
+            if (!Directory.Exists(folderListLONG)) Directory.CreateDirectory(folderListLONG);
+            if (!Directory.Exists(folderListSHORT)) Directory.CreateDirectory(folderListSHORT);
+
+            List<string> listLONG = new List<string>();
+            List<string> listSHORT = new List<string>();
+
             string[] fileImages = Directory.GetFiles("D:\\CoinAnalysis\\CoinAnalysis\\bin\\Debug\\CoinGlass");
 
             foreach (string fileImage in fileImages)
             {
+                string coinCode = fileImage.Split('_').Last().Split('.').First();
+
                 byte[] bytes = File.ReadAllBytes(fileImage);
                 MemoryStream ms = new MemoryStream(bytes);
                 Image img = Image.FromStream(ms);
@@ -333,13 +345,41 @@ namespace CoinAnalysis
                 if (numYellowUpHight >= pixelYellow && numYellowDown == 0)
                 {
                     File.Copy(fileImage, fileImage.Replace("\\CoinGlass", "\\CoinGlass_LONG"), true);
+
+                    listLONG.Add(coinCode);
                 }
 
                 if (numYellowUp == 0 && numYellowDownHight >= pixelYellow)
                 {
                     File.Copy(fileImage, fileImage.Replace("\\CoinGlass", "\\CoinGlass_SHORT"), true);
+
+                    listSHORT.Add(coinCode);
                 }
             }
+
+            string listLongFile = Path.Combine(folderListLONG, "coin_long_" + DateTime.Today.ToString("yyyy-MM-dd") + ".txt");
+            string listShortFile = Path.Combine(folderListSHORT, "coin_short_" + DateTime.Today.ToString("yyyy-MM-dd") + ".txt");
+
+            File.WriteAllLines(listLongFile, listLONG, Encoding.UTF8);
+            File.WriteAllLines(listShortFile, listSHORT, Encoding.UTF8);
+        }
+
+        private void buttonListCompare_Click(object sender, EventArgs e)
+        {
+            string listLongFileToday = Path.Combine(folderListLONG, "coin_long_" + DateTime.Today.ToString("yyyy-MM-dd") + ".txt");
+            string listLongFileYesterday = Path.Combine(folderListLONG, "coin_long_" + DateTime.Today.AddDays(-1).ToString("yyyy-MM-dd") + ".txt");
+
+            if (!File.Exists(listLongFileToday) || !File.Exists(listLongFileYesterday))
+            {
+                return;
+            }
+
+            List<string> listLongToday = File.ReadAllLines(listLongFileToday, Encoding.UTF8).ToList();
+            List<string> listLongYesterday = File.ReadAllLines(listLongFileYesterday, Encoding.UTF8).ToList();
+
+            List<string> intersection = listLongToday.Intersect(listLongYesterday).ToList();
+
+            MessageBox.Show(string.Join("\n", intersection));
         }
     }
 }

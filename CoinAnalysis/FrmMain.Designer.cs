@@ -40,6 +40,7 @@
             this.label2 = new System.Windows.Forms.Label();
             this.numYellowPixel = new System.Windows.Forms.NumericUpDown();
             this.label3 = new System.Windows.Forms.Label();
+            this.buttonListCompare = new System.Windows.Forms.Button();
             ((System.ComponentModel.ISupportInitialize)(this.numPageCMC)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.numStartIndex)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.numYellowPixel)).BeginInit();
@@ -80,7 +81,7 @@
             // 
             // buttonScanAnalysis
             // 
-            this.buttonScanAnalysis.Location = new System.Drawing.Point(15, 110);
+            this.buttonScanAnalysis.Location = new System.Drawing.Point(15, 73);
             this.buttonScanAnalysis.Name = "buttonScanAnalysis";
             this.buttonScanAnalysis.Size = new System.Drawing.Size(150, 40);
             this.buttonScanAnalysis.TabIndex = 5;
@@ -90,7 +91,7 @@
             // 
             // buttonAnalysis
             // 
-            this.buttonAnalysis.Location = new System.Drawing.Point(15, 198);
+            this.buttonAnalysis.Location = new System.Drawing.Point(15, 148);
             this.buttonAnalysis.Name = "buttonAnalysis";
             this.buttonAnalysis.Size = new System.Drawing.Size(150, 40);
             this.buttonAnalysis.TabIndex = 6;
@@ -101,7 +102,7 @@
             // label1
             // 
             this.label1.AutoSize = true;
-            this.label1.Location = new System.Drawing.Point(201, 112);
+            this.label1.Location = new System.Drawing.Point(201, 75);
             this.label1.Name = "label1";
             this.label1.Size = new System.Drawing.Size(94, 17);
             this.label1.TabIndex = 7;
@@ -109,7 +110,7 @@
             // 
             // numPageCMC
             // 
-            this.numPageCMC.Location = new System.Drawing.Point(321, 110);
+            this.numPageCMC.Location = new System.Drawing.Point(321, 73);
             this.numPageCMC.Maximum = new decimal(new int[] {
             9,
             0,
@@ -126,7 +127,7 @@
             // 
             // numStartIndex
             // 
-            this.numStartIndex.Location = new System.Drawing.Point(321, 141);
+            this.numStartIndex.Location = new System.Drawing.Point(321, 104);
             this.numStartIndex.Name = "numStartIndex";
             this.numStartIndex.Size = new System.Drawing.Size(50, 23);
             this.numStartIndex.TabIndex = 10;
@@ -139,7 +140,7 @@
             // label2
             // 
             this.label2.AutoSize = true;
-            this.label2.Location = new System.Drawing.Point(201, 143);
+            this.label2.Location = new System.Drawing.Point(201, 106);
             this.label2.Name = "label2";
             this.label2.Size = new System.Drawing.Size(93, 17);
             this.label2.TabIndex = 9;
@@ -147,7 +148,7 @@
             // 
             // numYellowPixel
             // 
-            this.numYellowPixel.Location = new System.Drawing.Point(321, 208);
+            this.numYellowPixel.Location = new System.Drawing.Point(321, 158);
             this.numYellowPixel.Maximum = new decimal(new int[] {
             50,
             0,
@@ -170,17 +171,28 @@
             // label3
             // 
             this.label3.AutoSize = true;
-            this.label3.Location = new System.Drawing.Point(201, 210);
+            this.label3.Location = new System.Drawing.Point(201, 160);
             this.label3.Name = "label3";
             this.label3.Size = new System.Drawing.Size(94, 17);
             this.label3.TabIndex = 11;
             this.label3.Text = "Số pixel Vàng";
+            // 
+            // buttonListCompare
+            // 
+            this.buttonListCompare.Location = new System.Drawing.Point(15, 208);
+            this.buttonListCompare.Name = "buttonListCompare";
+            this.buttonListCompare.Size = new System.Drawing.Size(150, 40);
+            this.buttonListCompare.TabIndex = 13;
+            this.buttonListCompare.Text = "Compare";
+            this.buttonListCompare.UseVisualStyleBackColor = true;
+            this.buttonListCompare.Click += new System.EventHandler(this.buttonListCompare_Click);
             // 
             // FrmMain
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(397, 260);
+            this.Controls.Add(this.buttonListCompare);
             this.Controls.Add(this.numYellowPixel);
             this.Controls.Add(this.label3);
             this.Controls.Add(this.numStartIndex);
@@ -221,6 +233,7 @@
         private System.Windows.Forms.Label label2;
         private System.Windows.Forms.NumericUpDown numYellowPixel;
         private System.Windows.Forms.Label label3;
+        private System.Windows.Forms.Button buttonListCompare;
     }
 }
 
