@@ -158,9 +158,11 @@ namespace CoinAnalysis
                 }
             }
 
-            File.WriteAllLines("list_500_coin.txt", listCoinCode, Encoding.UTF8);
+            listCoinCode = listCoinCode.Distinct().ToList();
 
-            //listCoinCode = File.ReadAllLines("list_500_coin.txt", Encoding.UTF8).ToList();
+            File.WriteAllLines("list_coins.txt", listCoinCode, Encoding.UTF8);
+
+            //listCoinCode = File.ReadAllLines("list_coins.txt", Encoding.UTF8).ToList();
 
             string folderImage = Path.Combine(Application.StartupPath, "CoinGlass");
 
